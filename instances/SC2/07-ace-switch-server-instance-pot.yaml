@@ -3,10 +3,10 @@ apiVersion: appconnect.ibm.com/v1beta1
 metadata:
   labels:
     backup.appconnect.ibm.com/component: switchserver
-  name: ${INST_NAME}
+  name: ${SWITCHSRV_INSTANCE_NAME}
 spec:
   license:
     accept: true
-    license: ${INST_LIC}
+    license: L-XRNH-47FJAW
     use: CloudPakForIntegrationNonProduction
-  version: '${INST_VER}'
+  version: '12.0'

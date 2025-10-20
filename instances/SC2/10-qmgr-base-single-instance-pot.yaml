@@ -3,14 +3,19 @@ kind: QueueManager
 metadata:
   annotations:
     com.ibm.mq/write-defaults-spec: 'false'
-  name: ${INST_NAME}
+  name: ${QMGR_INSTANCE_NAME}
 spec:
+  annotations:
+    productID: 151bec68564a4a47a14e6fa99266deff
+    productCloudpakRatio: '8:1'
+    productName: IBM MQ for Non-Production
+    productMetric: VIRTUAL_PROCESSOR_CORE
   license:
     accept: true
-    license: ${INST_LIC}
+    license: L-JTPV-KYG8TF
     use: NonProduction
   queueManager:
-    name: QMGRSERVER
+    name: QMGRBASE
     resources:
       limits:
         cpu: 500m
@@ -19,10 +24,17 @@ spec:
     storage:
       queueManager:
         type: persistent-claim
-      defaultClass: ${OCP_BLOCK_STORAGE}
       defaultDeleteClaim: true
+      defaultClass: ${OCP_BLOCK_STORAGE}
     availability:
       type: SingleInstance
+  template:
+    pod:
+      containers:
+        - env:
+            - name: MQSNOAUT
+              value: 'yes'
+          name: qmgr
   version: ${MQ_VERSION}
   web:
     console:

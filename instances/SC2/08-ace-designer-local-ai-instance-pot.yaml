@@ -3,7 +3,7 @@ kind: DesignerAuthoring
 metadata:
   labels:
     backup.appconnect.ibm.com/component: designerauthoring
-  name: ${INST_NAME}
+  name: ${DESIGNER_INSTANCE_NAME}
 spec:
   authentication:
     integrationKeycloak:
@@ -28,9 +28,9 @@ spec:
         class: ${OCP_FILE_STORAGE}
   license:
     accept: true
-    license: ${INST_LIC}
+    license: L-XRNH-47FJAW
     use: CloudPakForIntegrationNonProduction
   replicas: 1
   switchServer:
-    name: ace-switch-server
-  version: '${INST_VER}'
+    name: ${SWITCHSRV_INSTANCE_NAME}
+  version: '12.0'
