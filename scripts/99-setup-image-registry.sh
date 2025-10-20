@@ -63,7 +63,7 @@ if [[ -z "$(oc get pod -n openshift-image-registry -l docker-registry=default --
         oc patch config.imageregistry.operator.openshift.io/cluster --type=merge -p '{"spec":{"rolloutStrategy":"Recreate","replicas":1}}'
         PrintLn "Creating PVC for Image Registry" "BLUE"
         oc create -f resources/99-image-registry-pvc.yaml -n openshift-image-registry
-        Print "Deploying Image Registry instance" "BLUE"
+        PrintLn "Deploying Image Registry instance" "BLUE"
         oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"storage":{"pvc":{"claim":"image-registry-storage"}}}}'
         while ! oc wait --for=jsonpath='{.status.conditions[1].status}'=True deployment/image-registry -n openshift-image-registry 2>/dev/null; do sleep 30; done
         PrintLn "Image Registry instance is ready" "GREEN"
