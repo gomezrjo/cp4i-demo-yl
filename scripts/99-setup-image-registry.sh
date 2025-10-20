@@ -53,6 +53,7 @@ done
 
 PrintLn "Checking pre-requisites..." "BLUE"
 ValidateOC
+PressEnter
 
 if [[ -z "$(oc get pod -n openshift-image-registry -l docker-registry=default --ignore-not-found --no-headers)" ]]; then
     PrintLn "Image Registry instance is NOT available" "MAGENTA"
