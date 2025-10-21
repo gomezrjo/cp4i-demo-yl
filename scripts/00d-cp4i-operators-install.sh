@@ -59,7 +59,7 @@ while getopts ${OPTSTRING} option; do
 				Help
 				exit 1
 			fi
-			OP_NAME=$OPTARG;;
+			OP_NAME=$(echo "$OPTARG" | tr '[:upper:]' '[:lower:]');;
 		r) # Get operator release
 			if [[ "$OPTARG" == -* ]]; then
 				PrintLn "ERROR: Option -$option requires an argument, but received another option: $OPTARG" "RED"
@@ -95,6 +95,15 @@ ValidateOC
 ValidateOpName "$OP_NAME"
 ValidateCatRel "$CP4I_VERSION" "${CAT_MANIFESTS[$OP_IND]}" "$OP_REL"
 PressEnter
+
+if [ $OP_NAME == "common-services" ]; then
+    PrintLn "Creating namespace for common services..." "BLUE"
+    if [[ -z "$(oc projects -q | awk '$1 == "ibm-common-services" {print $1}')" ]]; then
+        oc create namespace ibm-common-services
+    else
+        PrintLn "Namespace ibm-common-services already exists." "GREEN"
+    fi
+fi
 
 MANIFEST_NAME="${CAT_MANIFESTS[$OP_IND]}${OP_REL}.yaml"
 CATALOG_NAME=${CATALOGS[$OP_IND]}
