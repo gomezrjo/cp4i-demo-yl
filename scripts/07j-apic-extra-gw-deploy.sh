@@ -119,7 +119,11 @@ oc apply -f resources/13a-apic-dp-selfsigning-issuer.yaml -n ${NS_NAME}
 oc apply -f resources/13b-apic-dp-ingress-issuer.yaml -n ${NS_NAME}
 oc apply -f resources/13c-apic-dp-gw-service-certificate.yaml -n ${NS_NAME}
 oc apply -f resources/13d-apic-dp-gw-peering-certificate.yaml -n ${NS_NAME}
-oc -n ${NS_NAME} create secret generic admin-secret --from-literal=password=admin
+if [[ -z "$(oc get secret admin-secret -n ${NS_NAME} --no-headers --ignore-not-found=true)" ]]; then
+	oc -n ${NS_NAME} create secret generic admin-secret --from-literal=password=admin
+else
+	PrintLn "DP Gateway admin-secret already exists in namespace $NS_NAME" "GREEN"
+fi
 
 PrintLn "Getting info from CSV..." "BLUE"
 SUB_NAME=$(oc get deployment ibm-apiconnect -n openshift-operators -o jsonpath='{.metadata.labels.olm\.owner}')

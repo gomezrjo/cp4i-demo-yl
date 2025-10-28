@@ -42,7 +42,11 @@ B) Prepare your cluster:
    ```
    scripts/00a-cp4i-prereq-vaidation.sh
    ```
-2. Configure image registry for your cluster. If you have provisioned your OCP cluster in Tech Zone using OCP-V you can use the following script to enable the image registry:
+2. Set a default storage class for your cluster. If you have provisioned your OCP cluster in Tech Zone you can use the following script to set the proper default storage class:
+   ```
+   scripts/99-odf-tkz-set-scs.sh
+   ```
+3. Configure image registry for your cluster. If you have provisioned your OCP cluster in Tech Zone using OCP-V you can use the following script to enable the image registry:
    ```
    scripts/99-setup-image-registry.sh
    ```

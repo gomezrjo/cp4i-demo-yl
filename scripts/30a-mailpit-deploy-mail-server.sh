@@ -87,7 +87,7 @@ oc apply -f resources/30b-mailpit-services.yaml
 oc apply -f resources/30c-mailpit-route.yaml
 
 MAILPIT_URL=$(oc get route mailpit-ui -n mailpit -o jsonpath='{.status.ingress[0].host}')
-PrintLn "MailPit URL is: ${MAILPIT_URL}" "CYAN"
+PrintLn "MailPit URL is: http://${MAILPIT_URL}" "CYAN"
 PrintLn "Password for mailpit-admin is: ${MAILPIT_ADMIN_PWD}" "CYAN"
 PrintLn "INFO: Write down this information to access MailPit later on once it is ready." "YELLOW"
 PressEnter

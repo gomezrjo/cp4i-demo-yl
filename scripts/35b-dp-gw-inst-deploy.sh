@@ -82,6 +82,11 @@ PressEnter
 
 PrintLn "Creating DataPower Gateway configuration..." "BLUE"
 oc apply -f resources/16a-dp-gw-webui-config.yaml -n ${NS_NAME}
+if [[ -z "$(oc get secret admin-secret -n ${NS_NAME} --no-headers --ignore-not-found=true)" ]]; then
+	oc -n ${NS_NAME} create secret generic admin-secret --from-literal=password=admin
+else
+	PrintLn "DP Gateway admin-secret already exists in namespace $NS_NAME" "GREEN"
+fi
 
 PrintLn "Getting info from CSV..." "BLUE"
 SUB_NAME=$(oc get deployment datapower-operator -n openshift-operators -o jsonpath='{.metadata.labels.olm\.owner}')
