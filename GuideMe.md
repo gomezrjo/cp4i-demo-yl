@@ -337,7 +337,7 @@ H) Deploy Standalone DP Gateway (optional):
 
 <details>
 <summary>
-L) Deploy Event Streams: 
+I) Deploy Event Streams: 
 </summary>
 
 1. Install Event Streams Operator:
@@ -394,7 +394,7 @@ L) Deploy Event Streams:
 
 <details>
 <summary>
-M) Deploy Event Endpoint Management - EEM (optional): 
+J) Deploy Event Endpoint Management - EEM (optional): 
 </summary>
 
 1. Install EEM Operator:
