@@ -11,9 +11,9 @@ Additionally you will need to have installed the following tools in your worksta
 This guide assumes you already have an OCP cluster with the right version and capacity up and running in [TechZone](https://techzone.ibm.com/home), and that you are already logged into your OCP cluster. For best results I recommend you use OCP v4.18.x with 5 worker nodes 32 vCPUs X 128 GB memory each.
 
 Check the list of pre-requisites before using this guide using the following command:
-    ```
-    scripts/00a-cp4i-tools-prereq-vaidation.sh
-    ```
+   ```
+   scripts/00a-cp4i-tools-prereq-vaidation.sh
+   ```
 
 Once you confirm you have the required tools in your workstation you are ready to use the following guide.
 
