@@ -11,13 +11,14 @@ Help()
 	PrintLn "   oc" "YELLOW"
 	PrintLn "   jq" "YELLOW"
     PrintLn "   yq" "YELLOW"
-	PrintLn "Syntax: 07j-apic-extra-gw-deploy.sh [-h|n|i|e|d|s]" "MAGENTA"
+	PrintLn "Syntax: 07j-apic-extra-gw-deploy.sh [-h|n|i|e|d|z|s]" "MAGENTA"
 	PrintLn "Options:" "GREEN"
 	PrintLn "   h     Print this Help." "CYAN"
 	PrintLn "   n     Provide API Gateway Namespace value." "CYAN"
 	PrintLn "   i     Provide API Gateway Instance name." "CYAN"
 	PrintLn "   e     Provide APIC Namespace value." "CYAN"
 	PrintLn "   d     Provide APIC Instance name." "CYAN"
+	PrintLn "   z     Enable DP Image Override." "CYAN"
 	PrintLn "   s     Enable Save Manifest." "CYAN"
 }
 
@@ -37,17 +38,21 @@ NS_NAME="cp4i-dp"
 DINST_NAME="apim-demo"
 DNS_NAME="tools"
 SAVE_MANIFEST="NO"
+OVERRIDE_DP=""
 
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
-OPTSTRING=":n:i:e:d:sh"
+OPTSTRING=":n:i:e:d:szh"
 # Get the options
 while getopts ${OPTSTRING} option; do
 	case $option in
 		h) # Display Help
 			Help
 			exit;;
+		z) # Enable Tracing
+			PrintLn "INFO: Tracing enabled" "YELLOW"
+			OVERRIDE_DP="YES";;
 		s) # Enable save manifest
 			PrintLn "INFO: Save Manifest enabled" "YELLOW"
 			SAVE_MANIFEST="YES";;
@@ -139,6 +144,29 @@ STACK_HOST=$(oc get route "${DINST_NAME}-gw-gateway" -n ${DNS_NAME} -o jsonpath=
     DINST_NAME=${DINST_NAME} \
     STACK_HOST=${STACK_HOST} \
     sh > apic-api-gwy-instance.yaml
+
+if [ ! -z "$OVERRIDE_DP" ]; then
+	PrintLn "Configuring DataPower override for Extra DP API Gateway instance..." "BLUE"
+	IMG_VER=""
+	SUB_NAME=$(oc get deployment datapower-operator -n openshift-operators -o jsonpath='{.metadata.labels.olm\.owner}')
+	LISTVER=$(oc get csv $SUB_NAME -o json | jq -rc '.spec.customresourcedefinitions.owned | [.[] | select(.kind == "DataPowerService")] | .[] | .specDescriptors |  [.[] | select(.path == "version")] | .[] | ."x-descriptors"[]')
+	while read i; do
+		TEMPSTR="${i##*:}"
+		if [[ "$TEMPSTR" > "$IMG_VER" ]]; then
+			IMG_VER="$TEMPSTR"
+		fi
+	done < <(echo "$LISTVER")
+	IMG_NAME="datapower-cp4i-$IMG_VER"
+	IMG_SHA256=$(oc get csv $SUB_NAME -o json | jq --arg img_name $IMG_NAME -r '.spec.relatedImages | [.[] | select(.name == $img_name)] | .[] | .image')
+	#IMG_VER=$(oc get csv $SUB_NAME -o json | jq -r '.metadata.annotations."alm-examples" | fromjson | [.[] | select(.kind == "DataPowerService")] | .[] | select(.metadata.name == "quickstart") | .spec.version')
+	IMG_LIC=$(oc get csv $SUB_NAME -o json | jq -r '.metadata.annotations."alm-examples" | fromjson | [.[] | select(.kind == "DataPowerService")] | .[] | select(.metadata.name == "quickstart") | .spec.license.license')
+	export IMG_VER
+	export IMG_SHA256
+	export IMG_LIC
+	yq -i '.spec.dataPowerOverride.version = strenv(IMG_VER) |
+		.spec.dataPowerOverride.license = strenv(IMG_LIC) |
+		.spec.dataPowerOverride.image = strenv(IMG_SHA256)' apic-api-gwy-instance.yaml
+fi
 
 PrintLn "Creating API Gateway instance..." "BLUE"
 oc apply -f apic-api-gwy-instance.yaml -n ${NS_NAME}

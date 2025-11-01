@@ -100,6 +100,7 @@ done
 PrintLn "Checking pre-requisites..." "BLUE"
 ValidateAWK
 ValidateOC
+ValidateAPIKey "$API_KEY"
 ValidateNS "$CP4I_NAMESPACE" "NOKEY"
 ValidateOpDeployed "cp4i"
 ValidateInstance "$CP4I_INST_NAME" "PlatformNavigator" "$CP4I_NAMESPACE"
@@ -108,7 +109,6 @@ ValidateOpDeployed "datapower"
 ValidateOpDeployed "apiconnect"
 ValidateInstance "$APIC_INST_NAME" "APIConnectCluster" "$APIC_NAMESPACE"
 ValidateAPICcli "$APIC_INST_NAME" "$APIC_NAMESPACE"
-ValidateAPIKey "$API_KEY"
 PressEnter
 
 #################

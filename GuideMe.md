@@ -330,11 +330,7 @@ H) Deploy Standalone DP Gateway (optional):
    ```
    scripts/35a-dp-gw-routes-config.sh
    ```
-3. Get the DP Gateway Web UI URL:
-   ```
-   echo -e "\033[1;33mhttps://$(oc get route dpwebui-route -n cp4i-dp -o jsonpath='{.spec.host}')\033[0m"
-   ```
-4. Go to your favorite browser and enter the URL.
+3. Go to your favorite browser and enter the URL.
    *Note*: This is ONLY for demo purposes and show the Web UI but you shouldn't be making changes to a DP Gateway running on containers via the Web UI.
 </details>
 &nbsp;

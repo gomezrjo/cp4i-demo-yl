@@ -245,6 +245,60 @@ ValidateAuth()
     fi
 }
 
+ValidateToken()
+{
+    if [ $# -lt 1 ]; then
+        PrintLn "ERROR: ValidateToken routine missing argument. Check if you have modified the scripts." "RED"
+        exit 1
+    fi
+
+    if [ -z "$1" ]; then
+        PrintLn "ERROR: ValidateToken routine empty argument. Check if you have modified the scripts." "RED"
+        exit 1
+    fi
+
+    local TKN=$1
+    local DELIMITER="-"
+    IFS="$DELIMITER" read -ra my_array <<< "$TKN"
+    local num_elements=${#my_array[@]}
+    
+    PrintLn "INFO: APIKEY/TOKEN is set to $AUT" "YELLOW"
+    if [ $num_elements -ne 5 ]; then
+        PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format." "RED"
+        exit 1
+    else
+        local allowed_chars_regex="^[a-z0-9]+$"
+        for i in $(seq 0 4); do
+            string_length=${#my_array[$i]}
+            case $i in
+            0)
+                if [ $string_length -ne 8 ];then
+                    PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format." "RED"
+                    exit 1
+                fi
+                ;;
+            4)
+                if [ $string_length -ne 12 ];then
+                    PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format." "RED"
+                    exit 1
+                fi
+                ;;
+            *)
+                if [ $string_length -ne 4 ];then
+                    echo PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format." "RED"
+                    exit 1
+                fi
+                ;;
+            esac
+            my_item="${my_array[$i]}"
+            if [[ ! "$my_item" =~ $allowed_chars_regex  ]]; then
+                PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format." "RED"
+                exit 1
+            fi
+        done
+    fi
+}
+
 ValidateOC()
 {
     # Check if oc cli is available in workstation
@@ -414,8 +468,45 @@ ValidateAPIKey()
     fi
 
     local KEY=$1
-
+    local DELIMITER="-"
+    IFS="$DELIMITER" read -ra my_array <<< "$KEY"
+    local num_elements=${#my_array[@]}
+    
     PrintLn "INFO: APIC_API_KEY is set to $KEY" "YELLOW"
+    if [ $num_elements -ne 5 ]; then
+        PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format. Format should be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" "RED"
+        exit 1
+    else
+        local allowed_chars_regex="^[a-z0-9]+$"
+        for i in $(seq 0 4); do
+            string_length=${#my_array[$i]}
+            case $i in
+            0)
+                if [ $string_length -ne 8 ];then
+                    PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format. Format should be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" "RED"
+                    exit 1
+                fi
+                ;;
+            4)
+                if [ $string_length -ne 12 ];then
+                    PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format. Format should be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" "RED"
+                    exit 1
+                fi
+                ;;
+            *)
+                if [ $string_length -ne 4 ];then
+                    echo PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format. Format should be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" "RED"
+                    exit 1
+                fi
+                ;;
+            esac
+            my_item="${my_array[$i]}"
+            if [[ ! "$my_item" =~ $allowed_chars_regex  ]]; then
+                PrintLn "ERROR: The APIKEY/TOKEN does not have the expected format. Format should be XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" "RED"
+                exit 1
+            fi
+        done
+    fi
 }
 
 ValidateCatRel()

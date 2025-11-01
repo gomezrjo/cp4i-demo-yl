@@ -111,9 +111,18 @@ PrintLn "Preparing Route File for DataPower Gateway HTTP User Traffic..." "BLUE"
 PrintLn "Creating DataPower Gateway HTTP Route..." "BLUE"
 oc apply -f dp-http-route.yaml -n ${NS_NAME}
 
+DPWEBUI_URL=$(oc get route dpwebui-route -n ${NS_NAME} -o jsonpath='{.spec.host}')
+DP_ADMIN_PWD=$(oc get secret admin-secret -n ${NS_NAME} -o jsonpath='{.data.password}' | base64 -d)
+PrintLn "DP Web UI URL is: https://${DPWEBUI_URL}" "CYAN"
+PrintLn "Password for admin is: ${DP_ADMIN_PWD}" "CYAN"
+PrintLn "INFO: Write down this information to access the DP Gateway later on." "YELLOW"
+PressEnter
+
 PrintLn "Cleaning up temp files..." "BLUE"
 rm -f dp-gw-services.yaml
 rm -f dp-webui-route.yaml
 rm -f dp-http-route.yaml
 
 PrintLn "DataPower Gateway Networking configuration (Service and Routes) has been created." "GREEN"
+
+echo -e "\033[1;33mhttps://$(oc get route dpwebui-route -n cp4i-dp -o jsonpath='{.spec.host}')\033[0m"
